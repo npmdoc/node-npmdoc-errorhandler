@@ -63,6 +63,24 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.errorhandler.errorhandler">
+            function <span class="apidocSignatureSpan"></span>errorhandler
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.errorhandler.toString">
+            function <span class="apidocSignatureSpan">errorhandler.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <span class="apidocSignatureSpan">string <span class="apidocSignatureSpan">errorhandler.</span>title</span>
 
         </li>
@@ -73,6 +91,122 @@
 
 <div class="apidocSectionDiv">
 <h1><a href="#apidoc.module.errorhandler" id="apidoc.module.errorhandler">module errorhandler</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.errorhandler.errorhandler" id="apidoc.element.errorhandler.errorhandler">
+        function <span class="apidocSignatureSpan"></span>errorhandler
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function errorHandler(options) {
+  // get environment
+  var env = process.env.NODE_ENV || &#x27;development&#x27;
+
+  // get options
+  var opts = options || {}
+
+  // get log option
+  var log = opts.log === undefined
+    ? env !== &#x27;test&#x27;
+    : opts.log
+
+  if (typeof log !== &#x27;function&#x27; &#x26;&#x26; typeof log !== &#x27;boolean&#x27;) {
+    throw new TypeError(&#x27;option log must be function or boolean&#x27;)
+  }
+
+  // default logging using console.error
+  if (log === true) {
+    log = logerror
+  }
+
+  return function errorHandler (err, req, res, next) {
+    // respect err.statusCode
+    if (err.statusCode) {
+      res.statusCode = err.statusCode
+    }
+
+    // respect err.status
+    if (err.status) {
+      res.statusCode = err.status
+    }
+
+    // default status code to 500
+    if (res.statusCode &#x3c; 400) {
+      res.statusCode = 500
+    }
+
+    // log the error
+    var str = stringify(err)
+    if (log) {
+      defer(log, err, str, req, res)
+    }
+
+    // cannot actually respond
+    if (res._header) {
+      return req.socket.destroy()
+    }
+
+    // negotiate
+    var accept = accepts(req)
+    var type = accept.type(&#x27;html&#x27;, &#x27;json&#x27;, &#x27;text&#x27;)
+
+    // Security header for content sniffing
+    res.setHeader(&#x27;X-Content-Type-Options&#x27;, &#x27;nosniff&#x27;)
+
+    // html
+    if (type === &#x27;html&#x27;) {
+      var isInspect = !err.stack &#x26;&#x26; String(err) === toString.call(err)
+      var errorHtml = !isInspect
+        ? escapeHtmlBlock(str.split(&#x27;\n&#x27;, 1)[0] || &#x27;Error&#x27;)
+        : &#x27;Error&#x27;
+      var stack = !isInspect
+        ? String(str).split(&#x27;\n&#x27;).slice(1)
+        : [str]
+      var stackHtml = stack
+        .map(function (v) { return &#x27;&#x3c;li&#x3e;&#x27; + escapeHtmlBlock(v) + &#x27;&#x3c;/li&#x3e;&#x27; })
+        .join(&#x27;&#x27;)
+      var body = TEMPLATE
+        .replace(&#x27;{style}&#x27;, STYLESHEET)
+        .replace(&#x27;{stack}&#x27;, stackHtml)
+        .replace(&#x27;{title}&#x27;, escapeHtml(exports.title))
+        .replace(&#x27;{statusCode}&#x27;, res.statusCode)
+        .replace(/\{error\}/g, errorHtml)
+      res.setHeader(&#x27;Content-Type&#x27;, &#x27;text/html; charset=utf-8&#x27;)
+      res.end(body)
+    // json
+    } else if (type === &#x27;json&#x27;) {
+      var error = { message: err.message, stack: err.stack }
+      for (var prop in err) error[prop] = err[prop]
+      var json = JSON.stringify({ error: error }, null, 2)
+      res.setHeader(&#x27;Content-Type&#x27;, &#x27;application/json; charset=utf-8&#x27;)
+      res.end(json)
+    // plain text
+    } else {
+      res.setHeader(&#x27;Content-Type&#x27;, &#x27;text/plain; charset=utf-8&#x27;)
+      res.end(str)
+    }
+  }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.errorhandler.toString" id="apidoc.element.errorhandler.toString">
+        function <span class="apidocSignatureSpan">errorhandler.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return toString;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
 
 
 

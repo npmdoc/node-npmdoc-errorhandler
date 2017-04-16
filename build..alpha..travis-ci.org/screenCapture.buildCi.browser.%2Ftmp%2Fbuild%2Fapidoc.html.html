@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/expressjs/errorhandler"
-
-    >errorhandler (v1.5.0)</a>
+    <a href="https://github.com/expressjs/errorhandler">errorhandler (v1.5.0)</a>
 </h1>
 <h4>Development-only error handler middleware</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.errorhandler">module errorhandler</a><ol>
 
@@ -102,18 +95,18 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function errorHandler(options) {
   // get environment
-  var env = process.env.NODE_ENV || &#x27;development&#x27;
+  var env = process.env.NODE_ENV || 'development'
 
   // get options
   var opts = options || {}
 
   // get log option
   var log = opts.log === undefined
-    ? env !== &#x27;test&#x27;
+    ? env !== 'test'
     : opts.log
 
-  if (typeof log !== &#x27;function&#x27; &#x26;&#x26; typeof log !== &#x27;boolean&#x27;) {
-    throw new TypeError(&#x27;option log must be function or boolean&#x27;)
+  if (typeof log !== 'function' &amp;&amp; typeof log !== 'boolean') {
+    throw new TypeError('option log must be function or boolean')
   }
 
   // default logging using console.error
@@ -133,7 +126,7 @@
     }
 
     // default status code to 500
-    if (res.statusCode &#x3c; 400) {
+    if (res.statusCode &lt; 400) {
       res.statusCode = 500
     }
 
@@ -150,41 +143,41 @@
 
     // negotiate
     var accept = accepts(req)
-    var type = accept.type(&#x27;html&#x27;, &#x27;json&#x27;, &#x27;text&#x27;)
+    var type = accept.type('html', 'json', 'text')
 
     // Security header for content sniffing
-    res.setHeader(&#x27;X-Content-Type-Options&#x27;, &#x27;nosniff&#x27;)
+    res.setHeader('X-Content-Type-Options', 'nosniff')
 
     // html
-    if (type === &#x27;html&#x27;) {
-      var isInspect = !err.stack &#x26;&#x26; String(err) === toString.call(err)
+    if (type === 'html') {
+      var isInspect = !err.stack &amp;&amp; String(err) === toString.call(err)
       var errorHtml = !isInspect
-        ? escapeHtmlBlock(str.split(&#x27;\n&#x27;, 1)[0] || &#x27;Error&#x27;)
-        : &#x27;Error&#x27;
+        ? escapeHtmlBlock(str.split('\n', 1)[0] || 'Error')
+        : 'Error'
       var stack = !isInspect
-        ? String(str).split(&#x27;\n&#x27;).slice(1)
+        ? String(str).split('\n').slice(1)
         : [str]
       var stackHtml = stack
-        .map(function (v) { return &#x27;&#x3c;li&#x3e;&#x27; + escapeHtmlBlock(v) + &#x27;&#x3c;/li&#x3e;&#x27; })
-        .join(&#x27;&#x27;)
+        .map(function (v) { return '&lt;li&gt;' + escapeHtmlBlock(v) + '&lt;/li&gt;' })
+        .join('')
       var body = TEMPLATE
-        .replace(&#x27;{style}&#x27;, STYLESHEET)
-        .replace(&#x27;{stack}&#x27;, stackHtml)
-        .replace(&#x27;{title}&#x27;, escapeHtml(exports.title))
-        .replace(&#x27;{statusCode}&#x27;, res.statusCode)
+        .replace('{style}', STYLESHEET)
+        .replace('{stack}', stackHtml)
+        .replace('{title}', escapeHtml(exports.title))
+        .replace('{statusCode}', res.statusCode)
         .replace(/\{error\}/g, errorHtml)
-      res.setHeader(&#x27;Content-Type&#x27;, &#x27;text/html; charset=utf-8&#x27;)
+      res.setHeader('Content-Type', 'text/html; charset=utf-8')
       res.end(body)
     // json
-    } else if (type === &#x27;json&#x27;) {
+    } else if (type === 'json') {
       var error = { message: err.message, stack: err.stack }
       for (var prop in err) error[prop] = err[prop]
       var json = JSON.stringify({ error: error }, null, 2)
-      res.setHeader(&#x27;Content-Type&#x27;, &#x27;application/json; charset=utf-8&#x27;)
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
       res.end(json)
     // plain text
     } else {
-      res.setHeader(&#x27;Content-Type&#x27;, &#x27;text/plain; charset=utf-8&#x27;)
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8')
       res.end(str)
     }
   }
@@ -218,3 +211,4 @@
     ]
 </div>
 </div>
+</body></html>
